@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Assets/Bootstrap/css/bootstrap.css")
+    @Styles.Render("~/Assets/Worldmap/css/worldmap.css")
+    @Styles.Render("~/styles")
+</head>
+<body>
+    <div class="worldmap" style="width:80%"></div>
+
+    @RenderBody()
+
+    @Scripts.Render("~/ng")
+    @Scripts.Render("~/app")
+    @Scripts.Render("~/jquery")
+    @Scripts.Render("~/bootstrap")
+    @Scripts.Render("~/worldmap")
+    @Scripts.Render("~/misc")
+</body>
+</html>

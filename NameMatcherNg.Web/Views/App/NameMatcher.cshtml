@@ -1,0 +1,22 @@
+﻿<h2>Name Matcher</h2>
+
+<ul class="list-unstyled">
+    <li ng-repeat="country in countries">
+        @* TODO: SB: do not pass countryId by Id *@
+        <div class="item" id="{{country.Id}}" app-draggable>{{country.Name}}</div>
+    </li>
+</ul>
+
+<h3>Selected countries</h3>
+<div class="btn btn-warning" app-droppable drop="setCountryOne"></div>
+<div class="btn btn-success" app-droppable drop="setCountryTwo"></div>
+
+<h3>Common baby names</h3>
+
+<ul class="list-unstyled">
+    <li ng-repeat="babyName in babyNames">
+        @* TODO: SB: do not pass countryId by Id *@
+        <div class="item">{{babyName.Name}}</div>
+    </li>
+</ul>
+
