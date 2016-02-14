@@ -28,7 +28,7 @@
             });
        } 
 
-        $scope.setCountryOne = function (countryId){ 
+        $scope.onCountrySelectionChanged = function (countryCodeOne, countryCodeTwo){ 
             $scope.countryIdOne = countryId;
 
             if ($scope.countryIdTwo !== undefined) {
@@ -43,7 +43,4 @@
                 $scope.getNames();
             }
         }
-
-        //Get the current user's list when the page loads.
-        $scope.getCountries();
     }]);

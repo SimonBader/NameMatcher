@@ -7,7 +7,7 @@ namespace NameMatcherNg.Web.Models
 {
     public class NameMatcherBindingModel
     {
-        public int CountryIdOne { get; set; }
-        public int CountryIdTwo { get; set; }
+        public string CountryCodeOne { get; set; }
+        public string CountryCodeTwo { get; set; }
     }
 }

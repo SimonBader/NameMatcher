@@ -68,8 +68,12 @@ namespace NameMatcherNg.Web.Tests
             {
                 foreach(Country country in db.Countries)
                 {
-                    string countryCode = countryCodes.Single(x => x.Key == country.Name).Value;
-                    country.CountryCode = countryCode;
+                    string countryCode = countryCodes.SingleOrDefault(x => x.Key == country.Name).Value;
+
+                    if(countryCode != null)
+                    {
+                        country.CountryCode = countryCode;
+                    }
                 }
 
                 db.SaveChanges();

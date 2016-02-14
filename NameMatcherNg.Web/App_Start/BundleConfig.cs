@@ -8,6 +8,8 @@ namespace NameMatcherNg.Web
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
+            bundles.Add(new ScriptBundle("~/jquery").Include(
+                        "~/Assets/jquery/jquery.min.js"));
 
             bundles.Add(new ScriptBundle("~/bootstrap").Include(
                      "~/Assets/Bootstrap/js/bootstrap.js"));
@@ -22,13 +24,6 @@ namespace NameMatcherNg.Web
                         "~/Assets/ng/angular-cookies.min.js"));
 
             bundles.Add(new ScriptBundle("~/app").IncludeDirectory("~/Assets/app", "*.js", true));
-
-            bundles.Add(new ScriptBundle("~/jquery").Include(
-                        "~/Assets/jquery/jquery.min.js"));
-
-            bundles.Add(new ScriptBundle("~/worldmap").Include(
-                     "~/Assets/worldmap/js/worldmapgenerator.js",
-                     "~/Assets/worldmap/js/worldmap.js"));
 
             bundles.Add(new ScriptBundle("~/misc").IncludeDirectory("~/Assets/misc", "*.js", true));
 

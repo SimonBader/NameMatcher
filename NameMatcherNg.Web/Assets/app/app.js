@@ -5,7 +5,8 @@
     'signIn',
     'register',
     'todoManager',
-    'nameMatcher'
+    'nameMatcher',
+    'worldmap'
 ]);
 
 // TODO: SB: remove directive again!!
@@ -99,65 +100,16 @@ app.directive('appDroppable', function () {
         }
     }
 });
-app.directive('appCountrySelector', function () {
+app.directive('appWorldmap', function () {
     return {
         scope: {
-            drop: '&' // parent
+            selectionChanged: '&OnSelectionChanged'
         },
-        link: function (scope, element) {
-            // again we need the native object
-            var el = element[0];
-
-            el.addEventListener(
-                'dragover',
-                function (e) {
-                    e.dataTransfer.dropEffect = 'move';
-                    // allows us to drop
-                    if (e.preventDefault) e.preventDefault();
-                    this.classList.add('over');
-                    return false;
-                },
-                false
-            );
-            el.addEventListener(
-                'dragenter',
-                function (e) {
-                    this.classList.add('over');
-                    return false;
-                },
-                false
-            );
-            el.addEventListener(
-                'dragleave',
-                function (e) {
-                    this.classList.remove('over');
-                    return false;
-                },
-                false
-            );
-            el.addEventListener(
-                'drop',
-                function (e) {
-                    // Stops some browsers from redirecting.
-                    if (e.stopPropagation) e.stopPropagation();
-
-                    this.classList.remove('over');
-
-                    var item = document.getElementById(e.dataTransfer.getData('Text'));
-                    this.appendChild(item);
-
-                    // call the drop passed drop function
-                    scope.$apply(function (scope) {
-                        var fn = scope.drop();
-                        if ('undefined' !== typeof fn) {
-                            fn(item.id);
-                        }
-                    });
-
-                    return false;
-                },
-                false
-            );
+        template: "<div />",
+        controller: "worldmapCtrl",
+        link: function (scope, element, attributes, controller) {
+            var options = $.extend({}, controller.DEFAULTS, element.data(), typeof option == 'object' && option);
+            controller.initialize(element, options)
         }
     }
 });

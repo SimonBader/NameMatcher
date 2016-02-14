@@ -210,6 +210,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\app\app.js" />
+    <Content Include="Assets\app\controllers\FixedQueue.js" />
     <Content Include="Assets\app\controllers\homeCtrl.js" />
     <Content Include="Assets\app\controllers\nameMatcherCtrl.js" />
     <Content Include="Assets\app\controllers\registerCtrl.js" />
@@ -231,9 +232,6 @@
     <Content Include="Assets\ng\angular-route.min.js" />
     <Content Include="Assets\ng\angular.min.js" />
     <Content Include="Assets\styles\styles.css" />
-    <Content Include="Assets\worldmap\css\worldmap.css" />
-    <Content Include="Assets\worldmap\js\worldmap.js" />
-    <Content Include="Assets\worldmap\js\worldmapgenerator.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">

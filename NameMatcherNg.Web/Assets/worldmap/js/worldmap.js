@@ -1,1 +1,0 @@
-﻿$('.worldmap').WorldMapGenerator();
