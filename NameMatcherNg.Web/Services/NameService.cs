@@ -41,7 +41,7 @@ namespace NameMatcherNg.Web.Services
             {
                 babyNames.Add(new BabyName
                 {
-                    Name = name.value,
+                    Name = HttpContext.Current.Server.HtmlEncode(name.value),
                     HRef = name.href
                 });
             }

@@ -7,7 +7,8 @@
          * @return {[type]}         [description]
          */
         this.initialize = function (element, options) {
-            this.$el = element;
+            this.element = element;
+            this.countryCodes = new FixedQueue(2);
 
             var polygon = [],
                 option = [],
@@ -15,7 +16,7 @@
                 containerArr = [],
                 timezone = this.timeZoneValue;
             for (var index in timezone) {
-                polygon.push(this.genrateElement('polygon', {
+                polygon.push(this.generateElement('polygon', {
                     'data-timezone': timezone[index].timezone,
                     'data-country': timezone[index].country,
                     'data-pin': timezone[index].pin,
@@ -23,54 +24,49 @@
                     'points': timezone[index].points,
                     'data-zonename': ((options.dayLightSaving) ? (moment().tz(timezone[index].timezone).zoneName()) : (timezone[index].zoneName))
                 }, false, true));
-                option.push(this.genrateElement('option', {
+                option.push(this.generateElement('option', {
                     'value': timezone[index].timezone
                 }, timezone[index].timezone + " (" + ((options.dayLightSaving) ? (moment().tz(timezone[index].timezone).zoneName()) : (timezone[index].zoneName)) + ")"));
             }
             if (options.selectBox) {
-                var select = this.genrateElement('select', {
+                var select = this.generateElement('select', {
                     'class': 'btn btn-default dropdown-toggle',
                 }, option);
                 containerArr.push(select);
             }
 
-
             if (options.quickLink.length > 0) {
                 for (var index in options.quickLink[0]) {
-                    quickLink.push(this.genrateElement('span', {
+                    quickLink.push(this.generateElement('span', {
                         'data-select': options.quickLink[0][index]
                     }, index));
                 }
-                var qickLinkDiv = this.genrateElement('div', {
+                var qickLinkDiv = this.generateElement('div', {
                     'class': 'quickLink'
                 }, quickLink);
                 containerArr.push(qickLinkDiv);
             }
 
-
-
-            var svg = this.genrateElement('svg', {
+            var svg = this.generateElement('svg', {
                 'class': 'timezone-map',
                 'viewBox': '0 0 ' + options.width + ' ' + options.height
             }, polygon, true);
 
             if (containerArr.length > 0) {
-                var container = this.genrateElement('div', {
+                var container = this.generateElement('div', {
                     'class': 'Cbox'
                 }, containerArr);
-                this.$el.append(container);
+                this.element.append(container);
 
             }
-            this.$el.append(svg);
+            this.element.append(svg);
 
             if (options.showHoverText) {
-                var hoverZone = this.genrateElement('span', {
+                var hoverZone = this.generateElement('span', {
                     'class': 'hoverZone',
                 });
-                this.$el.append(hoverZone);
+                this.element.append(hoverZone);
             }
-
-
 
             if (options.defaultCss) {
                 this.createCss(options);
@@ -86,17 +82,25 @@
                  */
         this.setValue = function (value, attribute) {
 
-            this.$el.find('svg polygon').attr('data-selected', 'false');
-            var elements = this.$el.find('svg polygon[data-' + ((attribute) ? (attribute) : ("country")) + '="' + value + '"]');
+            this.element.find('svg polygon').attr('data-selected', 'false');
+            var elements = this.element.find('svg polygon[data-' + ((attribute) ? (attribute) : ("country")) + '="' + value + '"]');
 
             if (elements && elements.length) {
                 elements.attr('data-selected', 'true');
-                this.$el.find('select option[value="' + ((attribute) ? (elements.attr('data-timeZone')) : (value)) + '"]').prop('selected', true);
-                this.$el.find('.quickLink span').removeClass('active');
-                var findQuickLink = this.$el.find('.quickLink span[data-select="' + value + '"]');
-                this.$el.find('.quickLink span[data-select="' + value + '"]').addClass('active');
-                this.$el.find('.quickLink span[data-select="' + elements.attr('data-zonename') + '"]').addClass('active');
 
+                if (this.countryCodes.length > 0)
+                {
+                    var selectedElements = this.element.find('svg polygon[data-' + ((attribute) ? (attribute) : ("country")) + '="' + this.countryCodes[0] + '"]');
+                    selectedElements.attr('data-selected', 'true');
+                }
+
+                this.countryCodes.unshift(value);
+                this.element.find('select option[value="' + ((attribute) ? (elements.attr('data-timeZone')) : (value)) + '"]').prop('selected', true);
+                this.element.find('.quickLink span').removeClass('active');
+                var findQuickLink = this.element.find('.quickLink span[data-select="' + value + '"]');
+                this.element.find('.quickLink span[data-select="' + value + '"]').addClass('active');
+                this.element.find('.quickLink span[data-select="' + elements.attr('data-zonename') + '"]').addClass('active');
+                $scope.selectionChanged({ countryCodes: this.countryCodes })
             }
         },
         /**
@@ -105,7 +109,7 @@
          */
         this.getValue = function () {
             var value = [];
-            this.$el.find('svg polygon[data-selected="true"]').map(function (index, el) {
+            this.element.find('svg polygon[data-selected="true"]').map(function (index, el) {
                 value.push($(el).data());
             });
             return value;
@@ -116,46 +120,43 @@
          */
         this.bindEvent = function() {
             var that = this;
-            this.$el.on('mouseenter', 'svg polygon', function (e) {
+            this.element.on('mouseenter', 'svg polygon', function (e) {
                 var d = $(this).data();
                 $('.timezone-map polygon[data-country="' + d.country + '"]').attr('class', 'active');
-                that.$el.find('.hoverZone').text(d.country);
+                that.element.find('.hoverZone').text(d.country);
             });
-            this.$el.on('mouseleave', 'svg polygon', function(e) {
+            this.element.on('mouseleave', 'svg polygon', function(e) {
                 $('.timezone-map polygon').attr('class', '');
-                that.$el.find('.hoverZone').text('');
+                that.element.find('.hoverZone').text('');
             });
-            this.$el.on('click', 'svg polygon', function() {
+            this.element.on('click', 'svg polygon', function() {
 
                 that.setValue($(this).attr('data-country'));
-                that.$el.trigger("map:clicked");
-
+                that.element.trigger("map:clicked");
             });
-            this.$el.on('change', 'select', function() {
+            this.element.on('change', 'select', function() {
                 that.setValue($(this).val());
-                that.$el.trigger("map:clicked");
+                that.element.trigger("map:clicked");
             });
-            this.$el.on('click', '.quickLink span', function() {
+            this.element.on('click', '.quickLink span', function() {
                 var selectValue = $(this).data().select
                 if (selectValue.search('/') > 0) {
                     that.setValue(selectValue, 'timezone');
                 } else {
                     that.setValue(selectValue, 'zonename');
                 }
-                that.$el.trigger("map:clicked");
+                that.element.trigger("map:clicked");
             });
         },
         /**
-         * [genrateElement description]
+         * [generateElement description]
          * @param  {[Jquery Object]}  element     [selector]
          * @param  {[type]}  elementAttr [description]
          * @param  {[javascript Object or text]}  chilled      [If we pass javascript object or  array it will append all chilled and if you pass string it will add string(value) inside element ]
          * @param  {Boolean} isSvg       [If it is svg then it will create svg element]
          * @return {[type]}              [description]
          */
-        this.genrateElement = function(element, elementAttr, chilled, isSvg) {
-
-
+        this.generateElement = function(element, elementAttr, chilled, isSvg) {
             if (isSvg) {
                 var elementObject = document.createElementNS('http://www.w3.org/2000/svg', element);
             } else {
@@ -180,7 +181,6 @@
             }
 
             return elementObject;
-
         },
         /**
          * [createCss function will create css dynamically it is insert style attribute in  in head ]
@@ -3371,10 +3371,7 @@
             mapColor: '#BBB',
             defaultCss: true,
             localStore: true,
-            quickLink: [{
-                "IST": "IST",
-                "EAT": "EAT"
-            }],
+            quickLink: [{ }],
             selectBox: false,
             showHoverText: false,
             dayLightSaving: ((typeof moment == "function") ? (true) : (false))

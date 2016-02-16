@@ -103,7 +103,7 @@ app.directive('appDroppable', function () {
 app.directive('appWorldmap', function () {
     return {
         scope: {
-            selectionChanged: '&OnSelectionChanged'
+            selectionChanged: '&onSelectionChanged'
         },
         template: "<div />",
         controller: "worldmapCtrl",

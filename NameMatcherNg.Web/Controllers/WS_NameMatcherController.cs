@@ -13,19 +13,40 @@ namespace NameMatcherNg.Web.Controllers
         private DBContext db = new DBContext();
 
         [HttpPost]
-        public async Task<List<BabyName>> Names(NameMatcherBindingModel bindingModel)
+        public async Task<List<BabyName>> Names(NamesBindingModel bindingModel)
         {
-            Country countryOne = db.Countries.Single(x => x.CountryCode == bindingModel.CountryCodeOne);
-            Country countryTwo = db.Countries.Single(x => x.CountryCode == bindingModel.CountryCodeTwo);
-            List<BabyName> namesCountryOne = await db.Names.Where(x => x.CountryId == countryOne.Id).ToListAsync();
-            List<BabyName> namesCountryTwo = await db.Names.Where(x => x.CountryId == countryTwo.Id).ToListAsync();
-            return namesCountryOne.Intersect(namesCountryTwo, new SimilarNameComparer()).ToList();
+            var namesTotal = new List<BabyName>();
+
+            foreach(string countryCode in bindingModel.CountryCodes)
+            {
+                Country country = db.Countries.Single(x => x.CountryCode == countryCode);
+                List<BabyName> namesFromCountry = await db.Names.Where(x => x.CountryId == country.Id).ToListAsync();
+
+                if(namesTotal.Any())
+                {
+                    namesTotal = namesTotal.Intersect(namesFromCountry, new SimilarNameComparer()).ToList();
+                }
+                else
+                {
+                    namesTotal = namesFromCountry;
+                }
+            }
+
+            return namesTotal.OrderBy(x => x.Name).ToList();
         }
 
-        [HttpGet]
-        public async Task<List<Country>> Countries()
+        [HttpPost]
+        public async Task<List<Country>> Countries(CountriesBindingModel bindingModel)
         {
-            return await db.Countries.ToListAsync();
+            if (bindingModel.Name == null)
+            {
+                return await db.Countries.ToListAsync();
+            }
+            else
+            {
+                var countryIdsWithSameName = db.Names.Where(x => x.Name == bindingModel.Name).Select(x => x.CountryId);
+                return await db.Countries.Where(x => countryIdsWithSameName.Contains(x.Id)).ToListAsync();
+            }
         }
     }
 }

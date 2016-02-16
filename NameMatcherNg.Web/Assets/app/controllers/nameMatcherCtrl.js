@@ -8,39 +8,49 @@
                 });
         }
 
-        $scope.getNames = function () {
+        $scope.onSelectionChanged = function (countryCodes) {
+            $scope.hideErrorMessage = true;
             var params = {
-                CountryIdOne: $scope.countryIdOne,
-                CountryIdTwo: $scope.countryIdTwo
+                CountryCodes: countryCodes
             };
             $http.post('/api/WS_NameMatcher/Names', params)
             .success(function (data, status, headers, config) {
                 $scope.babyNames = data;
+                $scope.filteredBabyNames = $scope.filterData(data);
             })
             .error(function (data, status, headers, config) {
-                if (angular.isArray(data))
-                    $scope.errorMessages = data;
-                else
-                    $scope.errorMessages = new Array(data.replace(/["']{1}/gi, ""));
-
-                $scope.showSuccessMessage = false;
-                $scope.showErrorMessage = true;
+                $scope.babyNames = [];
+                $scope.filteredBabyNames = [];
+                $scope.errorMessage = data['ExceptionMessage'];
+                $scope.hideErrorMessage = false;
             });
-       } 
-
-        $scope.onCountrySelectionChanged = function (countryCodeOne, countryCodeTwo){ 
-            $scope.countryIdOne = countryId;
-
-            if ($scope.countryIdTwo !== undefined) {
-                $scope.getNames();
-            }
         }
 
-        $scope.setCountryTwo = function (countryId) {
-            $scope.countryIdTwo = countryId;
+        $scope.filterChanged = function () {
+            $scope.filteredBabyNames = $scope.filterData($scope.babyNames);
+        };
 
-            if ($scope.countryIdOne !== undefined) {
-                $scope.getNames();
-            }
+        $scope.filterData = function (babyNames) {
+            return babyNames.filter(function (babyName) {
+                return $scope.filter == null ||
+                    babyName.Name.toLowerCase().indexOf($scope.filter) > -1;
+            });
+        }
+
+        $scope.getSimilarCountries = function (babyName) {
+            $scope.hideErrorMessage = true;
+            var params = {
+                Name: babyName.Name
+            };
+            $http.post('/api/WS_NameMatcher/Countries', params)
+            .success(function (data, status, headers, config) {
+                var similarCountries = $scope.filterData(data);
+            })
+            .error(function (data, status, headers, config) {
+                $scope.babyNames = [];
+                $scope.filteredBabyNames = [];
+                $scope.errorMessage = data['ExceptionMessage'];
+                $scope.hideErrorMessage = false;
+            });
         }
     }]);
