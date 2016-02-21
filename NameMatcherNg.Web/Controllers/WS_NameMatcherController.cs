@@ -38,13 +38,13 @@ namespace NameMatcherNg.Web.Controllers
         [HttpPost]
         public async Task<List<Country>> Countries(CountriesBindingModel bindingModel)
         {
-            if (bindingModel.Name == null)
+            if (bindingModel.BabyNameFilter == null)
             {
                 return await db.Countries.ToListAsync();
             }
             else
             {
-                var countryIdsWithSameName = db.Names.Where(x => x.Name == bindingModel.Name).Select(x => x.CountryId);
+                var countryIdsWithSameName = db.Names.Where(x => x.Name == bindingModel.BabyNameFilter).Select(x => x.CountryId);
                 return await db.Countries.Where(x => countryIdsWithSameName.Contains(x.Id)).ToListAsync();
             }
         }

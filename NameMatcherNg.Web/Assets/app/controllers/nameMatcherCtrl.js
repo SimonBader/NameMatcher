@@ -40,11 +40,13 @@
         $scope.getSimilarCountries = function (babyName) {
             $scope.hideErrorMessage = true;
             var params = {
-                Name: babyName.Name
+                BabyNameFilter: babyName.Name
             };
             $http.post('/api/WS_NameMatcher/Countries', params)
             .success(function (data, status, headers, config) {
-                var similarCountries = $scope.filterData(data);
+                $scope.similarCountryCodes = data.map(function (x) {
+                    return x.CountryCode;
+                });
             })
             .error(function (data, status, headers, config) {
                 $scope.babyNames = [];

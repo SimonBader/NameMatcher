@@ -216,6 +216,7 @@
     <Content Include="Assets\app\controllers\nameMatcherCtrl.js" />
     <Content Include="Assets\app\controllers\registerCtrl.js" />
     <Content Include="Assets\app\controllers\signInCtrl.js" />
+    <Content Include="Assets\app\controllers\TimeZoneValueProvider.js" />
     <Content Include="Assets\app\controllers\todoManagerCtrl.js" />
     <Content Include="Assets\app\controllers\worldmapCtrl.js" />
     <Content Include="Assets\bootstrap\css\bootstrap-theme.css" />

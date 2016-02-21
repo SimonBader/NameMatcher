@@ -103,7 +103,8 @@ app.directive('appDroppable', function () {
 app.directive('appWorldmap', function () {
     return {
         scope: {
-            selectionChanged: '&onSelectionChanged'
+            selectionChanged: '&onSelectionChanged',
+            highlightedCountryCodes: '='
         },
         template: "<div />",
         controller: "worldmapCtrl",
