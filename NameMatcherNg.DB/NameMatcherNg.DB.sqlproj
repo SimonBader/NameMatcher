@@ -151,8 +151,6 @@
     </Build>
   </ItemGroup>
   <ItemGroup>
-    <None Include="BabyNames.data.sql" />
-    <None Include="Countries.data.sql" />
     <None Include="Scripts\BabyNames.data.sql" />
     <None Include="Scripts\Countries.data.sql" />
     <None Include="NameMatcherNg.DB.publish.xml" />

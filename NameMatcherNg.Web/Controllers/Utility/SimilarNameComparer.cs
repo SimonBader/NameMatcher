@@ -11,12 +11,26 @@ namespace NameMatcherNg.Web.Controllers.Utility
 
         public bool Equals(BabyName one, BabyName two)
         {
+            if (one == null)
+            {
+                return two == null;
+            }
+            if (two == null)
+            {
+                return one == null;
+            }
+
             return one.Name == two.Name;
         }
 
 
         public int GetHashCode(BabyName babyName)
         {
+            if(babyName == null)
+            {
+                return 0;
+            }
+
             return babyName.Name.GetHashCode();
         }
     }

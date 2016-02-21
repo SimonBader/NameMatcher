@@ -5,4 +5,8 @@
     [CountryCode] NVARCHAR(5) NULL, 
     CONSTRAINT [PK_dbo.Countries] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+GO;
+
+CREATE INDEX IX_Countries_CountryCode 
+    ON dbo.Countries (CountryCode);
 
