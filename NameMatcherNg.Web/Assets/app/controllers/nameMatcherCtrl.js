@@ -10,24 +10,17 @@
 
         $scope.onSelectionChanged = function (countryCodes) {
             $scope.countryCode = countryCodes;
-            $scope.getNamesByCountries($scope.countryCode);
+            getNamesByCountries($scope.countryCode);
         }
 
         $scope.filterChanged = function () {
             if ($scope.countryCode != null) {
-                $scope.filteredBabyNames = $scope.filterData($scope.babyNames);
+                $scope.filteredBabyNames = filterData($scope.babyNames);
             }
             else {
-                $scope.getNamesByNameFilter($scope.filter);
+                getNamesByNameFilter($scope.filter);
             }
         };
-
-        $scope.filterData = function (babyNames) {
-            return babyNames.filter(function (babyName) {
-                return $scope.filter == null ||
-                    babyName.Name.toLowerCase().indexOf($scope.filter) > -1;
-            });
-        }
 
         $scope.getSimilarCountries = function (babyName) {
             $scope.hideErrorMessage = true;
@@ -48,29 +41,36 @@
             });
         }
 
-        $scope.getNamesByCountries = function (countryCodes) {
+        function getNamesByCountries(countryCodes) {
             var params = { CountryCodes: countryCodes };
-            $scope.getNames(params)
+            getNames(params)
         }
 
-        
-        $scope.getNamesByNameFilter = function (nameFilter) {
+
+        function getNamesByNameFilter(nameFilter) {
             var params = { NameFilter: nameFilter };
-            $scope.getNames(params)
+            getNames(params)
         }
 
-        $scope.getNames = function (params) {
+        function getNames(params) {
             $scope.hideErrorMessage = true;
             $http.post('/api/WS_NameMatcher/Names', params)
             .success(function (data, status, headers, config) {
                 $scope.babyNames = data;
-                $scope.filteredBabyNames = $scope.filterData(data);
+                $scope.filteredBabyNames = filterData(data);
             })
             .error(function (data, status, headers, config) {
                 $scope.babyNames = [];
                 $scope.filteredBabyNames = [];
                 $scope.errorMessage = data['ExceptionMessage'];
                 $scope.hideErrorMessage = false;
+            });
+        }
+
+        function filterData(babyNames) {
+            return babyNames.filter(function (babyName) {
+                return $scope.filter == null ||
+                    babyName.Name.toLowerCase().indexOf($scope.filter) > -1;
             });
         }
     }]);
