@@ -219,6 +219,7 @@
     <Content Include="Assets\app\controllers\TimeZoneValueProvider.js" />
     <Content Include="Assets\app\controllers\todoManagerCtrl.js" />
     <Content Include="Assets\app\controllers\worldmapCtrl.js" />
+    <Content Include="Assets\app\templates\worldmap.html" />
     <Content Include="Assets\bootstrap\css\bootstrap-theme.css" />
     <Content Include="Assets\bootstrap\css\bootstrap-theme.min.css" />
     <Content Include="Assets\bootstrap\css\bootstrap.css" />
@@ -234,6 +235,7 @@
     <Content Include="Assets\ng\angular-route.min.js" />
     <Content Include="Assets\ng\angular.min.js" />
     <Content Include="Assets\styles\styles.css" />
+    <Content Include="Assets\styles\worldmap.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">

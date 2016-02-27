@@ -149,11 +149,16 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="dbo\Tables\States.sql">
+      <QuotedIdentifier>On</QuotedIdentifier>
+      <AnsiNulls>On</AnsiNulls>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\BabyNames.data.sql" />
     <None Include="Scripts\Countries.data.sql" />
     <None Include="NameMatcherNg.DB.publish.xml" />
+    <None Include="Scripts\States.data.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment.sql" />

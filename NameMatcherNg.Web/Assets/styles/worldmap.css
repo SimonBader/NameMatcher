@@ -1,0 +1,15 @@
+﻿.worldmap-state {
+    fill: #bbb7b7;
+}
+
+.worldmap-state-selected {
+    fill: #ff0000;
+}
+
+.worldmap-state-hovered {
+    fill: #0026ff;
+}
+
+.worldmap-state-highlighted {
+    fill: #ffd800;
+}

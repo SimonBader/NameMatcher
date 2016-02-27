@@ -13,6 +13,12 @@ namespace NameMatcherNg.Web.Controllers
     {
         private DBContext db = new DBContext();
 
+        [HttpGet]
+        public async Task<List<State>> States()
+        {
+            return await db.States.ToListAsync();
+        }
+
         [HttpPost]
         public async Task<List<BabyName>> Names(NamesBindingModel bindingModel)
         {

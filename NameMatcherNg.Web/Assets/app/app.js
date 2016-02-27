@@ -106,7 +106,7 @@ app.directive('appWorldmap', function () {
             selectionChanged: '&onSelectionChanged',
             highlightedCountryCodes: '='
         },
-        template: "<div />",
+        templateUrl: "Assets/app/templates/worldmap.html",
         controller: "worldmapCtrl",
         link: function (scope, element, attributes, controller) {
             var options = $.extend({}, controller.DEFAULTS, element.data(), typeof option == 'object' && option);

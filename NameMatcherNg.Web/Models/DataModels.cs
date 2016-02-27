@@ -38,7 +38,16 @@ namespace NameMatcherNg.Web.Models
         public string Name { get; set; }
         public string HRef { get; set; }
         public string CountryCode { get; set; }
+    }
 
+    public class State
+    {
+        [Key]
+        public int Id { get; set; }
+        public string CountryCode { get; set; }
+        public string Pin { get; set; }
+        public double Offset { get; set; }
+        public string Points { get; set; }
     }
 
     public class BabyName
@@ -73,6 +82,8 @@ namespace NameMatcherNg.Web.Models
         public DbSet<todoItem> todos { get; set; }
 
         public DbSet<Country> Countries { get; set; }
+
+        public DbSet<State> States { get; set; }
 
         public DbSet<BabyName> Names { get; set; }
 
