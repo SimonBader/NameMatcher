@@ -9,8 +9,7 @@
         }
 
         $scope.click = function (countryCode) {
-            $scope.selectedCountryCodes.unshift(countryCode);
-            $scope.selectionChanged({ countryCodes: $scope.selectedCountryCodes })
+            updateSelectedCountries(countryCode);
         }
 
         $scope.mouseover = function (countryCode) {
@@ -22,11 +21,30 @@
         }
 
         $scope.styles = function (countryCode) {
+            var isHovered = $scope.hoveredCountryCode === countryCode;
+            var isSelected = containsArrayItem(countryCode, $scope.selectedCountryCodes);
+            var isHighlighted = containsArrayItem(countryCode, $scope.highlightedCountryCodes);
+
             return {
                 "worldmap-state": true,
-                "worldmap-state-hovered": $scope.hoveredCountryCode === countryCode,
-                "worldmap-state-selected": $.inArray(countryCode, $scope.selectedCountryCodes) >= 0,
-                "worldmap-state-highlighted": $.inArray(countryCode, $scope.highlightedCountryCodes) >= 0
+                "worldmap-state-hovered": isHovered,
+                "worldmap-state-selected": !isHovered & isSelected,
+                "worldmap-state-highlighted": !isHovered & isHighlighted,
             };
         };
+
+        function updateSelectedCountries(countryCode) {
+            if (containsArrayItem(countryCode, $scope.selectedCountryCodes)) {
+                $scope.selectedCountryCodes.remove(countryCode);
+            }
+            else {
+                $scope.selectedCountryCodes.enqueue(countryCode);
+            }
+
+            $scope.selectionChanged({ countryCodes: $scope.selectedCountryCodes });
+        }
+
+        function containsArrayItem(value, array) {
+            return $.inArray(value, array) !== -1;
+        }
     }]);

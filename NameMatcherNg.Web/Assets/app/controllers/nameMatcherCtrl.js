@@ -9,6 +9,7 @@
         }
 
         $scope.onSelectionChanged = function (countryCodes) {
+            $scope.similarCountryCodes = [];
             $scope.countryCode = countryCodes;
             getNamesByCountries($scope.countryCode);
         }

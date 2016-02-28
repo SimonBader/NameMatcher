@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using NameMatcherNg.Web.Controllers.Utility;
 using System;
+using System.Diagnostics;
 
 namespace NameMatcherNg.Web.Controllers
 {
@@ -55,7 +56,14 @@ namespace NameMatcherNg.Web.Controllers
 
             foreach (string countryCode in countryCodes)
             {
-                Country country = db.Countries.Single(x => x.CountryCode == countryCode);
+                Country country = db.Countries.SingleOrDefault(x => x.CountryCode == countryCode);
+
+                if(country == null)
+                {
+                    Trace.WriteLine($"The country with country code '{countryCode}' does not exist");
+                    continue;
+                }
+
                 List<BabyName> namesFromCountry = await db.Names.Where(x => x.CountryId == country.Id).ToListAsync();
 
                 if (namesTotal.Any())
