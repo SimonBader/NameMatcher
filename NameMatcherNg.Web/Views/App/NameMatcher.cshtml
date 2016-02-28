@@ -1,15 +1,20 @@
 ﻿
-<div class="row">
+<div>
     <div class="col-md-2">
-        <input type="search" class="form-control" placeholder="search for name..." ng-model="filter" ng-change="filterChanged()">
-        <div class="list-group">
-            <ul class="list-unstyled pre-scrollable">
-                <li class="list-group-item" ng-click="getSimilarCountries(babyName)" ng-repeat="babyName in filteredBabyNames">{{babyName.Name}}</li>
-            </ul>
-        </div>
+        <input type="search" 
+               class="form-control" 
+               placeholder="search for name..." 
+               ng-model="filter" 
+               ng-change="filterChanged()">
+        <ul class="list-group">
+            <li class="list-group-item" 
+                ng-click="getSimilarCountries(babyName)" 
+                ng-repeat="babyName in filteredBabyNames">{{babyName.Name}}</li>
+        </ul>
     </div>
-    <div class="col-md-8">
-        <app-worldmap on-selection-changed="onSelectionChanged(countryCodes)" highlighted-country-codes="similarCountryCodes" />
+    <div class="col-md-10">
+        <app-worldmap on-selection-changed="onSelectionChanged(countryCodes)" 
+                      highlighted-country-codes="similarCountryCodes" />
     </div>
 </div>
 <div ng-hide="hideErrorMessage">
