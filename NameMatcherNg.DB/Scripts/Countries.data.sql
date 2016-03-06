@@ -53,5 +53,4 @@ INSERT INTO [dbo].[Countries] ([Id], [Name], [CountryCode]) VALUES (51, N'India/
 INSERT INTO [dbo].[Countries] ([Id], [Name], [CountryCode]) VALUES (52, N'Japan', N'JP')
 INSERT INTO [dbo].[Countries] ([Id], [Name], [CountryCode]) VALUES (53, N'Korea', N'KR')
 INSERT INTO [dbo].[Countries] ([Id], [Name], [CountryCode]) VALUES (54, N'Vietnam', N'VN')
-INSERT INTO [dbo].[Countries] ([Id], [Name], [CountryCode]) VALUES (55, N'other countries', NULL)
 SET IDENTITY_INSERT [dbo].[Countries] OFF

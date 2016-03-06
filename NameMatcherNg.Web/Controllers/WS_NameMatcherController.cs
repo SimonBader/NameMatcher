@@ -46,7 +46,7 @@ namespace NameMatcherNg.Web.Controllers
             }
             else
             {
-                BabyName name = await db.Names.SingleAsync(x => x.Name == bindingModel.BabyNameFilter);
+                BabyName name = await db.Names.FirstAsync(x => x.Name == bindingModel.BabyNameFilter); // TODO: currently there are some name duplicates in DB.
                 countries = name.Countries.ToList();
             }
 

@@ -153,12 +153,14 @@
       <QuotedIdentifier>On</QuotedIdentifier>
       <AnsiNulls>On</AnsiNulls>
     </Build>
+    <Build Include="dbo\Tables\BabyNameCountries.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\BabyNames.data.sql" />
     <None Include="Scripts\Countries.data.sql" />
     <None Include="NameMatcherNg.DB.publish.xml" />
     <None Include="Scripts\States.data.sql" />
+    <None Include="Scripts\BabyNameCountries.data.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment.sql" />
