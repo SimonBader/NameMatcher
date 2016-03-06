@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace NameMatcherNg.Web.Models
 {
@@ -33,11 +35,17 @@ namespace NameMatcherNg.Web.Models
 
     public class Country
     {
+        public Country()
+        {
+            Names = new HashSet<BabyName>();
+        }
+
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        public string HRef { get; set; }
         public string CountryCode { get; set; }
+        [XmlIgnore]
+        public virtual ICollection<BabyName> Names { get; set; }
     }
 
     public class State
@@ -52,14 +60,17 @@ namespace NameMatcherNg.Web.Models
 
     public class BabyName
     {
+        public BabyName()
+        {
+            Countries = new HashSet<Country>();
+        }
         [Key]
         public int Id { get; set; }
-
-        public int CountryId { get; set; }
-
         public string Name { get; set; }
-
-        public string HRef { get; set; }
+        public string line { get; set; }
+        public bool IsFemale { get; set; }
+        public int Frequency { get; set; }
+        public virtual ICollection<Country> Countries { get; set; }
     }
 
     public class DBContext : IdentityDbContext<User>
@@ -92,6 +103,10 @@ namespace NameMatcherNg.Web.Models
     //This function will ensure the database is created and seeded with any default data.
     public class DBInitializer : CreateDatabaseIfNotExists<DBContext>
     {
+        public DBInitializer()
+        {
+
+        }
         protected override void Seed(DBContext context)
         {
             base.Seed(context);

@@ -6,11 +6,14 @@
                placeholder="search for name..." 
                ng-model="filter" 
                ng-change="filterChanged()">
-        <ul class="list-group">
-            <li class="list-group-item" 
+        <div class="list-group">
+            <a class="list-group-item" 
                 ng-click="getSimilarCountries(babyName)" 
-                ng-repeat="babyName in filteredBabyNames">{{babyName.Name}}</li>
-        </ul>
+                ng-repeat="babyName in filteredBabyNames">
+                {{babyName.Name}}
+                <span class="badge">{{babyName.CountryWithSimilarNameCount}}</span>
+            </a>
+        </div>
     </div>
     <div class="col-md-10">
         <app-worldmap on-selection-changed="onSelectionChanged(countryCodes)" 

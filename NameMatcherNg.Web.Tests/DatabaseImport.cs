@@ -5,9 +5,11 @@ using NameMatcherNg.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace NameMatcherNg.Web.Tests
 {
@@ -15,70 +17,13 @@ namespace NameMatcherNg.Web.Tests
     public class DatabaseImport
     {
         [TestMethod]
-        public void ImportCountriesAndNamesIntoDB()
+        public void ImportAllFromGenderLibraryIntoDB()
         {
-            var countryService = new CountryService();
-            var nameService = new NameService();
-
-            Trace.WriteLine("Create DB if not exists");
-            System.Data.Entity.Database.SetInitializer(new DBInitializer());
-
-            Trace.WriteLine("Start DB sync");
-
-            List<Country> countries = countryService.GetCountriesAsync().Result;
-
-            using (var dbContext = new DBContext())
-            {
-                dbContext.BulkInsert(countries);
-                dbContext.SaveChanges();
-
-                int totalCountries = countries.Count();
-                int countriesCount = 0;
-                Trace.WriteLine($"DB sync: {totalCountries} countries downloaded");
-
-                foreach (Country country in dbContext.Countries)
-                {
-                    Trace.WriteLine($"DB sync: start country {country.Name} ({countriesCount++} of {totalCountries})");
-                    BabyName[] names = nameService.GetNamesAsync(country.HRef).Result.ToArray();
-
-                    foreach (BabyName name in names)
-                    {
-                        name.CountryId = country.Id;
-                    }
-
-                    using (var nameContext = new DBContext())
-                    {
-                        nameContext.BulkInsert(names);
-                        nameContext.SaveChanges();
-                    }
-
-                    Trace.WriteLine($"DB sync: end country {country.Name}: {names.Count()} names downloaded");
-                }
-            }
-
-            Trace.WriteLine("End DB sync");
+            ImportCountryCodesAndNamesIntoDB();
+            MapCountryCodesAndNamesFromDB();
         }
+        
 
-        [TestMethod]
-        public void ImportCountryCodesIntoDB()
-        {
-            var countryCodeService = new CountryCodeService();
-            IDictionary<string, string> countryCodes = countryCodeService.GetCountryCodesAsync().Result;
-            using (var db = new DBContext())
-            {
-                foreach (Country country in db.Countries)
-                {
-                    string countryCode = countryCodes.SingleOrDefault(x => x.Key == country.Name).Value;
-
-                    if (countryCode != null)
-                    {
-                        country.CountryCode = countryCode;
-                    }
-                }
-
-                db.SaveChanges();
-            }
-        }
 
         [TestMethod]
         public void ImportStatesIntoDB()
@@ -3254,6 +3199,87 @@ namespace NameMatcherNg.Web.Tests
             }
 
             Trace.WriteLine($"DB sync: end states");
+        }
+
+        private void ImportCountryCodesAndNamesIntoDB()
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Country>));
+            List<Country> countries;
+
+            using (var stream = File.OpenRead("countries.xml"))
+            {
+                countries = (List<Country>)xmlSerializer.Deserialize(stream);
+            }
+
+            var wrapper = new CtGenderWrapper();
+            var names = wrapper.GetNames();
+
+            System.Data.Entity.Database.SetInitializer(new DBInitializer());
+
+            using (var dbContext = new DBContext())
+            {
+                dbContext.BulkInsert(countries);
+                dbContext.BulkInsert(names);
+                dbContext.SaveChanges();
+            }
+        }
+
+        private void MapCountryCodesAndNamesFromDB()
+        {
+            var wrapper = new CtGenderWrapper();
+            int currentNameId = 0;
+            bool reloadContext = false;
+
+            while (currentNameId != -1)
+            {
+                using (var dbContext = new DBContext())
+                {
+                    dbContext.Configuration.ValidateOnSaveEnabled = false;
+
+                    var babyNames = dbContext.Names.OrderBy(x => x.Id).ToList();
+                    var countries = dbContext.Countries.ToList();
+
+                    int count = 0;
+
+                    foreach (var babyName in babyNames)
+                    {
+                        if(babyName.Id <= currentNameId)
+                        {
+                            continue;
+                        }
+
+                        Trace.WriteLine($"Name {babyName.Name} (Id= {babyName.Id})...");
+                        if (babyName.line.StartsWith("#"))
+                        {
+                            continue;
+                        }
+
+                        var countryCodes = wrapper.GetCountryCodesWithFrequency(babyName.line);
+                        var countriesIncludingName = countries.Where(x => countryCodes.Keys.Contains(x.CountryCode));
+
+                        foreach (var countryIncludingName in countriesIncludingName)
+                        {
+                            babyName.Countries.Add(countryIncludingName);
+                        }
+
+                        if (count++ > 500)
+                        {
+                            currentNameId = babyName.Id;
+                            dbContext.SaveChanges();
+                            reloadContext = true;
+                            break;
+                        }
+
+                        reloadContext = false;
+                    }
+
+                    if(!reloadContext)
+                    {
+                        dbContext.SaveChanges();
+                        currentNameId = -1;
+                    }
+                }
+            }
         }
     }
 }

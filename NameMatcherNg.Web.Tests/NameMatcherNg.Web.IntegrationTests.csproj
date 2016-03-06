@@ -87,6 +87,7 @@
     <Compile Include="Controllers\WS_NameMatcherControllerTests.cs" />
     <Compile Include="CountryCodeServiceTests.cs" />
     <Compile Include="CountryServiceTests.cs" />
+    <Compile Include="CtGenderWrapper.cs" />
     <Compile Include="DatabaseImport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NameServiceTests.cs" />
@@ -100,6 +101,15 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="countries.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="nam_dict.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="readme_g.txt" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

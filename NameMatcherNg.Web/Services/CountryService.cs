@@ -43,8 +43,7 @@ namespace NameMatcherNg.Web.Services
             {
                 countries.Add(new Country
                 {
-                    Name = country.value,
-                    HRef = country.href
+                    Name = country.value
                 });
             }
 

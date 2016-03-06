@@ -188,6 +188,8 @@
     </Compile>
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\BabyNameViewModel.cs" />
+    <Compile Include="Models\CountryViewModel.cs" />
     <Compile Include="Models\DataModels.cs" />
     <Compile Include="Models\CountriesBindingModel.cs" />
     <Compile Include="Models\NamesBindingModel.cs" />
