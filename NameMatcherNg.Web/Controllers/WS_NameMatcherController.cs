@@ -55,30 +55,8 @@ namespace NameMatcherNg.Web.Controllers
 
         private async Task<List<BabyNameViewModel>> GetNamesByCountryCode(IList<string> countryCodes)
         {
-            var namesTotal = new List<BabyName>();
-
-            foreach (string countryCode in countryCodes)
-            {
-                Country country = await db.Countries.SingleOrDefaultAsync(x => x.CountryCode == countryCode);
-
-                if (country == null)
-                {
-                    Trace.WriteLine($"The country with country code '{countryCode}' does not exist");
-                    namesTotal.Clear();
-                    break;
-                }
-
-                if (namesTotal.Any())
-                {
-                    namesTotal = namesTotal.Intersect(country.Names, new SimilarNameComparer()).ToList();
-                }
-                else
-                {
-                    namesTotal = country.Names.ToList();
-                }
-            }
-
-            return namesTotal.Select(x => new BabyNameViewModel(x)).ToList();
+            var names = await db.Names.Include("Countries").Where(x => x.Countries.Select(y => y.CountryCode).Intersect(countryCodes).Count() == countryCodes.Count()).ToListAsync();
+            return names.Select(x => new BabyNameViewModel(x, x.Countries.Count())).ToList();
         }
 
         private async Task<List<BabyNameViewModel>> GetNamesByFilter(string nameFilter)
@@ -88,8 +66,8 @@ namespace NameMatcherNg.Web.Controllers
                 return new List<BabyNameViewModel>();
             }
 
-            List<BabyName> filteredNames = await db.Names.Where(x => x.Name.Contains(nameFilter)).Take(30).ToListAsync();
-            return filteredNames.Select(x => new BabyNameViewModel(x)).ToList(); ;
+            var filteredNames = await db.Names.Include("Countries").Where(x => x.Name.Contains(nameFilter)).Take(30).ToListAsync();
+            return filteredNames.Select(x => new BabyNameViewModel(x, x.Countries.Count())).ToList();
         }
     }
 }

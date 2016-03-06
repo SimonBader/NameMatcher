@@ -11,7 +11,7 @@
                 ng-click="getSimilarCountries(babyName)" 
                 ng-repeat="babyName in filteredBabyNames">
                 {{babyName.Name}}
-                <span class="badge">{{babyName.CountryWithSimilarNameCount}}</span>
+                <span class="badge" ng-show="babyName.CountriesWithSimilarNameCount > 1">{{babyName.CountriesWithSimilarNameCount}}</span>
             </a>
         </div>
     </div>
