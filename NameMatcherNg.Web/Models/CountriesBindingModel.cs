@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace NameMatcherNg.Web.Models
+﻿namespace NameMatcherNg.Web.Models
 {
-    public class NamesBindingModel
+    public class CountriesBindingModel
     {
-        public List<string> CountryCodes { get; set; }
-        public string NameFilter { get; set; }
+        public string BabyNameFilter { get; set; }
     }
 }
