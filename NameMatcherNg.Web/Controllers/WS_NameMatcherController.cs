@@ -12,7 +12,7 @@ namespace NameMatcherNg.Web.Controllers
 {
     public class WS_NameMatcherController : ApiController
     {
-        private DBContext db = new DBContext();
+        private DatabaseContext db = new DatabaseContext();
 
         [HttpGet]
         public async Task<List<State>> States()

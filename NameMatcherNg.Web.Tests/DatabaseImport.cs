@@ -3192,7 +3192,7 @@ namespace NameMatcherNg.Web.Tests
             Trace.WriteLine("Create DB if not exists");
             System.Data.Entity.Database.SetInitializer(new DBInitializer());
 
-            using (var nameContext = new DBContext())
+            using (var nameContext = new DatabaseContext())
             {
                 nameContext.BulkInsert(states);
                 nameContext.SaveChanges();
@@ -3216,7 +3216,7 @@ namespace NameMatcherNg.Web.Tests
 
             System.Data.Entity.Database.SetInitializer(new DBInitializer());
 
-            using (var dbContext = new DBContext())
+            using (var dbContext = new DatabaseContext())
             {
                 dbContext.BulkInsert(countries);
                 dbContext.BulkInsert(names);
@@ -3232,7 +3232,7 @@ namespace NameMatcherNg.Web.Tests
 
             while (currentNameId != -1)
             {
-                using (var dbContext = new DBContext())
+                using (var dbContext = new DatabaseContext())
                 {
                     dbContext.Configuration.ValidateOnSaveEnabled = false;
 
