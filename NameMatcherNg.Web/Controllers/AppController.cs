@@ -11,25 +11,6 @@ namespace NameMatcherNg.Web.Controllers
     /// </summary>
     public class AppController : Controller
     {
-        public ActionResult Register()
-        {
-            return PartialView();
-        }
-        public ActionResult SignIn()
-        {
-            return PartialView();
-        }
-        public ActionResult Home()
-        {
-            return PartialView();
-        }
-
-        [Authorize]
-        public ActionResult TodoManager()
-        {
-            return PartialView();
-        }
-        
         public ActionResult NameMatcher()
         {
             return PartialView();

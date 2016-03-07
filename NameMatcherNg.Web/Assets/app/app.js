@@ -1,105 +1,11 @@
 ﻿var app = angular.module('app', [
     'ngRoute',
     'ngCookies',
-    'home',
-    'signIn',
-    'register',
-    'todoManager',
     'nameMatcher',
     'worldmap'
 ]);
 
 // TODO: SB: remove directive again!!
-app.directive('appDraggable', function () {
-    return function (scope, element) {
-        // this gives us the native JS object
-        var el = element[0];
-
-        el.draggable = true;
-
-        el.addEventListener(
-            'dragstart',
-            function (e) {
-                e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('Text', this.id);
-                this.classList.add('drag');
-                return false;
-            },
-            false
-        );
-
-        el.addEventListener(
-            'dragend',
-            function (e) {
-                this.classList.remove('drag');
-                return false;
-            },
-            false
-        );
-    }
-});
-app.directive('appDroppable', function () {
-    return {
-        scope: {
-            drop: '&' // parent
-        },
-        link: function (scope, element) {
-            // again we need the native object
-            var el = element[0];
-
-            el.addEventListener(
-                'dragover',
-                function (e) {
-                    e.dataTransfer.dropEffect = 'move';
-                    // allows us to drop
-                    if (e.preventDefault) e.preventDefault();
-                    this.classList.add('over');
-                    return false;
-                },
-                false
-            );
-            el.addEventListener(
-                'dragenter',
-                function (e) {
-                    this.classList.add('over');
-                    return false;
-                },
-                false
-            );
-            el.addEventListener(
-                'dragleave',
-                function (e) {
-                    this.classList.remove('over');
-                    return false;
-                },
-                false
-            );
-            el.addEventListener(
-                'drop',
-                function (e) {
-                    // Stops some browsers from redirecting.
-                    if (e.stopPropagation) e.stopPropagation();
-
-                    this.classList.remove('over');
-
-                    var item = document.getElementById(e.dataTransfer.getData('Text'));
-                    this.appendChild(item);
-
-                    // call the drop passed drop function
-                    scope.$apply(function (scope) {
-                        var fn = scope.drop();
-                        if ('undefined' !== typeof fn) {
-                            fn(item.id);
-                        }
-                    });
-
-                    return false;
-                },
-                false
-            );
-        }
-    }
-});
 app.directive('appWorldmap', function () {
     return {
         scope: {
@@ -145,22 +51,6 @@ app.config(['$provide', '$routeProvider', '$httpProvider', function ($provide, $
     //================================================
     // Routes
     //================================================
-    $routeProvider.when('/home', {
-        templateUrl: 'App/Home',
-        controller: 'homeCtrl'
-    });
-    $routeProvider.when('/register', {
-        templateUrl: 'App/Register',
-        controller: 'registerCtrl'
-    });
-    $routeProvider.when('/signin/:message?', {
-        templateUrl: 'App/SignIn',
-        controller: 'signInCtrl'
-    });
-    $routeProvider.when('/todomanager', {
-        templateUrl: 'App/TodoManager',
-        controller: 'todoManagerCtrl'
-    });
     $routeProvider.when('/namematcher', {
         templateUrl: 'App/NameMatcher',
         controller: 'nameMatcherCtrl'

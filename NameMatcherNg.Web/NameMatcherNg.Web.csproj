@@ -176,24 +176,18 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\Utility\SimilarNameComparer.cs" />
-    <Compile Include="Controllers\WS_AccountController.cs" />
-    <Compile Include="Controllers\WS_TodoController.cs" />
     <Compile Include="Controllers\WS_NameMatcherController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\AccountBindingModels.cs" />
-    <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\BabyNameViewModel.cs" />
     <Compile Include="Models\CountriesBindingModel.cs" />
     <Compile Include="Models\CountryViewModel.cs" />
     <Compile Include="Models\DataModels.cs" />
     <Compile Include="Models\NamesBindingModel.cs" />
-    <Compile Include="Models\TodoItemViewModel.cs" />
     <Compile Include="Controllers\Utility\ModelErrorChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
@@ -214,12 +208,7 @@
   <ItemGroup>
     <Content Include="Assets\app\app.js" />
     <Content Include="Assets\app\controllers\FixedQueue.js" />
-    <Content Include="Assets\app\controllers\homeCtrl.js" />
     <Content Include="Assets\app\controllers\nameMatcherCtrl.js" />
-    <Content Include="Assets\app\controllers\registerCtrl.js" />
-    <Content Include="Assets\app\controllers\signInCtrl.js" />
-    <Content Include="Assets\app\controllers\TimeZoneValueProvider.js" />
-    <Content Include="Assets\app\controllers\todoManagerCtrl.js" />
     <Content Include="Assets\app\controllers\worldmapCtrl.js" />
     <Content Include="Assets\app\templates\worldmap.html" />
     <Content Include="Assets\bootstrap\css\bootstrap-theme.css" />
@@ -269,10 +258,6 @@
     <Content Include="Assets\ng\angular-route.min.js.map" />
     <Content Include="Assets\ng\angular.min.js.map" />
     <Content Include="Views\Main\Index.cshtml" />
-    <Content Include="Views\App\Home.cshtml" />
-    <Content Include="Views\App\Register.cshtml" />
-    <Content Include="Views\App\SignIn.cshtml" />
-    <Content Include="Views\App\TodoManager.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\App\NameMatcher.cshtml" />

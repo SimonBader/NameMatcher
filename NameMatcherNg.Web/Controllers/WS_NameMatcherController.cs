@@ -55,8 +55,17 @@ namespace NameMatcherNg.Web.Controllers
 
         private async Task<List<BabyNameViewModel>> GetNamesByCountryCode(IList<string> countryCodes)
         {
+            if (countryCodes.Count() == 0)
+            {
+                return new List<BabyNameViewModel>();
+            }
+
+            var before = DateTime.Now;
             var names = await db.Names.Include("Countries").Where(x => x.Countries.Select(y => y.CountryCode).Intersect(countryCodes).Count() == countryCodes.Count()).ToListAsync();
-            return names.Select(x => new BabyNameViewModel(x, x.Countries.Count())).ToList();
+            var namesViewModel = names.Select(x => new BabyNameViewModel(x, x.Countries.Count())).ToList();
+            var after = DateTime.Now;
+            Trace.WriteLine($"Duration GetNamesByCountryCode: {(after - before).TotalMilliseconds} ms");
+            return namesViewModel;
         }
 
         private async Task<List<BabyNameViewModel>> GetNamesByFilter(string nameFilter)
@@ -66,8 +75,12 @@ namespace NameMatcherNg.Web.Controllers
                 return new List<BabyNameViewModel>();
             }
 
+            var before = DateTime.Now;
             var filteredNames = await db.Names.Include("Countries").Where(x => x.Name.Contains(nameFilter)).Take(30).ToListAsync();
-            return filteredNames.Select(x => new BabyNameViewModel(x, x.Countries.Count())).ToList();
+            var namesViewModel = filteredNames.Select(x => new BabyNameViewModel(x, x.Countries.Count())).ToList();
+            var after = DateTime.Now;
+            Trace.WriteLine($"Duration GetNamesByFilter: {(after - before).TotalMilliseconds} ms");
+            return namesViewModel;
         }
     }
 }
