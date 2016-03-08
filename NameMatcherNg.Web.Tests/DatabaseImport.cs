@@ -17,6 +17,30 @@ namespace NameMatcherNg.Web.Tests
     public class DatabaseImport
     {
         [TestMethod]
+        public void Import_IntoDB()
+        {
+            using (var dbContext = new DatabaseContext())
+            {
+                var names = dbContext.Names.Include("Countries").ToList();
+                int count = 0;
+
+                foreach(var name in names)
+                {
+                    Trace.WriteLine($"Name {name.Name} (Id= {name.Id})...");
+                    name.CountriesWithSimilarNameCount = name.Countries.Count();
+
+                    if(count++ > 100)
+                    {
+                        count = 0;
+                        dbContext.SaveChanges();
+                    }
+                }
+                
+                dbContext.SaveChanges();
+            }
+        }
+
+        [TestMethod]
         public void ImportAllFromGenderLibraryIntoDB()
         {
             ImportCountryCodesAndNamesIntoDB();

@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace NameMatcherNg.Web.Models
+﻿namespace NameMatcherNg.Web.Models
 {
     public class BabyNameViewModel
     {
-        public BabyNameViewModel(BabyName babyName, int countriesWithSimilarNameCount)
+        public BabyNameViewModel(BabyName babyName)
         {
             Name = babyName.Name;
-            CountriesWithSimilarNameCount = countriesWithSimilarNameCount;
+            var count = babyName.CountriesWithSimilarNameCount;
+            CountriesWithSimilarNameCount = count.HasValue ? count.Value : 0;
         }
         public string Name { get; set; }
 

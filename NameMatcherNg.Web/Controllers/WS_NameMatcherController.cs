@@ -61,8 +61,8 @@ namespace NameMatcherNg.Web.Controllers
             }
 
             var before = DateTime.Now;
-            var names = await db.Names.Include("Countries").Where(x => x.Countries.Select(y => y.CountryCode).Intersect(countryCodes).Count() == countryCodes.Count()).ToListAsync();
-            var namesViewModel = names.Select(x => new BabyNameViewModel(x, x.Countries.Count())).ToList();
+            var names = await db.Names.Where(x => x.Countries.Select(y => y.CountryCode).Intersect(countryCodes).Count() == countryCodes.Count()).ToListAsync();
+            var namesViewModel = names.Select(x => new BabyNameViewModel(x)).ToList();
             var after = DateTime.Now;
             Trace.WriteLine($"Duration GetNamesByCountryCode: {(after - before).TotalMilliseconds} ms");
             return namesViewModel;
@@ -76,8 +76,8 @@ namespace NameMatcherNg.Web.Controllers
             }
 
             var before = DateTime.Now;
-            var filteredNames = await db.Names.Include("Countries").Where(x => x.Name.Contains(nameFilter)).Take(30).ToListAsync();
-            var namesViewModel = filteredNames.Select(x => new BabyNameViewModel(x, x.Countries.Count())).ToList();
+            var filteredNames = await db.Names.Where(x => x.Name.Contains(nameFilter)).Take(30).ToListAsync();
+            var namesViewModel = filteredNames.Select(x => new BabyNameViewModel(x)).ToList();
             var after = DateTime.Now;
             Trace.WriteLine($"Duration GetNamesByFilter: {(after - before).TotalMilliseconds} ms");
             return namesViewModel;
