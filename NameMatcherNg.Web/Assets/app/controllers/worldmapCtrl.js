@@ -5,6 +5,7 @@
             $http.get('/api/WS_NameMatcher/States')
             .success(function (data, status, headers, config) {
                 $scope.states = data;
+                $scope.hoveredState;
             });
         }
 
@@ -13,11 +14,16 @@
         }
 
         $scope.mouseover = function (countryCode) {
+            var hoveredState = $scope.states.filter(function (state) { return state.CountryCode === countryCode; }).shift();
             $scope.hoveredCountryCode = countryCode;
+            $scope.hoveredX = hoveredState.Pin.split(',')[0];
+            $scope.hoveredY = hoveredState.Pin.split(',')[1];
         }
 
         $scope.mouseleave = function (countryCode) {
             $scope.hoveredCountryCode = null;
+            $scope.hoveredX = null;
+            $scope.hoveredY = null;
         }
 
         $scope.styles = function (countryCode) {
