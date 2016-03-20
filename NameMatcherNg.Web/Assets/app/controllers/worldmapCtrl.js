@@ -53,4 +53,29 @@
         function containsArrayItem(value, array) {
             return $.inArray(value, array) !== -1;
         }
+
+        function inflateState(pin, points) {
+            var factor = 1.0;
+            var pinX = parseFloat(pin.split(',')[0]);
+            var pinY = parseFloat(pin.split(',')[1]);
+            var pointsArray = points.split(',');
+            var inflatedArray = [];
+
+            for (i = 0; i < points.split(',').length; i++) {
+                if (i % 0) {
+                    var x = parseFloat(pointsArray[i]);
+                    var diff =  x - pinX;
+                    var inflatedX = pinX + (diff * factor);
+                    inflatedArray.push(inflatedX);
+                }
+                else {
+                    var y = parseFloat(pointsArray[i]);
+                    var diff = y - pinY;
+                    var inflatedY = pinY + (diff * factor);
+                    inflatedArray.push(inflatedY);
+                }
+            }
+
+            return inflatedArray.join(',');
+        }
     }]);
