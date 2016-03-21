@@ -11,7 +11,7 @@ namespace NameMatcherNg.Web.Models
     {
         public Country()
         {
-            Names = new HashSet<BabyName>();
+            BabyName2CountryList = new HashSet<BabyName2Country>();
         }
 
         [Key]
@@ -19,6 +19,6 @@ namespace NameMatcherNg.Web.Models
         public string Name { get; set; }
         public string CountryCode { get; set; }
         [XmlIgnore]
-        public virtual ICollection<BabyName> Names { get; set; }
+        public virtual ICollection<BabyName2Country> BabyName2CountryList { get; set; }
     }
 }

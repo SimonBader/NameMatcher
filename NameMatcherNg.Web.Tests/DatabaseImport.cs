@@ -16,41 +16,86 @@ namespace NameMatcherNg.Web.Tests
     [TestClass]
     public class DatabaseImport
     {
+
         [TestMethod]
-        public void Import_IntoDB()
+        public void ImportIntoDB()
         {
+            ImportStatesIntoDB();
+            ImportCountryCodesAndNamesIntoDB();
+            ImportBabyName2CountryCodeListIntoDB();
+        }
+        
+
+        private void ImportCountryCodesAndNamesIntoDB()
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Country>));
+            List<Country> countries;
+
+            using (var stream = File.OpenRead("countries.xml"))
+            {
+                countries = (List<Country>)xmlSerializer.Deserialize(stream);
+            }
+
+            var wrapper = new CtGenderWrapper();
+            var names = wrapper.GetNames();
+
+            System.Data.Entity.Database.SetInitializer(new DBInitializer());
+
             using (var dbContext = new DatabaseContext())
             {
-                var names = dbContext.Names.Include("Countries").ToList();
-                int count = 0;
-
-                foreach(var name in names)
-                {
-                    Trace.WriteLine($"Name {name.Name} (Id= {name.Id})...");
-                    name.CountriesWithSimilarNameCount = name.Countries.Count();
-
-                    if(count++ > 100)
-                    {
-                        count = 0;
-                        dbContext.SaveChanges();
-                    }
-                }
-                
+                dbContext.BulkInsert(countries);
+                dbContext.BulkInsert(names);
                 dbContext.SaveChanges();
             }
         }
 
-        [TestMethod]
-        public void ImportAllFromGenderLibraryIntoDB()
+        private void ImportBabyName2CountryCodeListIntoDB()
         {
-            ImportCountryCodesAndNamesIntoDB();
-            MapCountryCodesAndNamesFromDB();
+            var wrapper = new CtGenderWrapper();
+            int currentNameId = 0;
+
+            using (var dbContext = new DatabaseContext())
+            {
+                var babyNames = dbContext.Names.OrderBy(x => x.Id).ToList();
+                var countries = dbContext.Countries.ToList();
+                var babyName2CountryList = new List<BabyName2Country>();
+
+                foreach (var babyName in babyNames)
+                {
+                    if (babyName.Id <= currentNameId)
+                    {
+                        continue;
+                    }
+
+                    Trace.WriteLine($"Name {babyName.Name} (Id= {babyName.Id})...");
+                    if (babyName.line.StartsWith("#"))
+                    {
+                        continue;
+                    }
+
+                    var countryCodesWithFrequency = wrapper.GetCountryCodesWithFrequency(babyName.line);
+
+                    foreach (var countryCodeWithFrequency in countryCodesWithFrequency)
+                    {
+                        var countryIncludingName = countries.Single(x => countryCodeWithFrequency.Key == x.CountryCode);
+                        var babyName2Country = new BabyName2Country() { BabyName = babyName, Country = countryIncludingName, Frequency = countryCodeWithFrequency.Value };
+                        babyName2CountryList.Add(babyName2Country);
+                    }
+                }
+
+                dbContext.BulkInsert(babyName2CountryList);
+                
+                foreach(var babyName2Country in babyName2CountryList)
+                {
+                    babyName2Country.BabyName.BabyName2CountryList.Add(babyName2Country);
+                    babyName2Country.Country.BabyName2CountryList.Add(babyName2Country);
+                }
+
+                dbContext.SaveChanges();
+            }
         }
-        
 
-
-        [TestMethod]
-        public void ImportStatesIntoDB()
+        private void ImportStatesIntoDB()
         {
             var states = new List<State>();
             states.Add(new State
@@ -3223,87 +3268,6 @@ namespace NameMatcherNg.Web.Tests
             }
 
             Trace.WriteLine($"DB sync: end states");
-        }
-
-        private void ImportCountryCodesAndNamesIntoDB()
-        {
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Country>));
-            List<Country> countries;
-
-            using (var stream = File.OpenRead("countries.xml"))
-            {
-                countries = (List<Country>)xmlSerializer.Deserialize(stream);
-            }
-
-            var wrapper = new CtGenderWrapper();
-            var names = wrapper.GetNames();
-
-            System.Data.Entity.Database.SetInitializer(new DBInitializer());
-
-            using (var dbContext = new DatabaseContext())
-            {
-                dbContext.BulkInsert(countries);
-                dbContext.BulkInsert(names);
-                dbContext.SaveChanges();
-            }
-        }
-
-        private void MapCountryCodesAndNamesFromDB()
-        {
-            var wrapper = new CtGenderWrapper();
-            int currentNameId = 0;
-            bool reloadContext = false;
-
-            while (currentNameId != -1)
-            {
-                using (var dbContext = new DatabaseContext())
-                {
-                    dbContext.Configuration.ValidateOnSaveEnabled = false;
-
-                    var babyNames = dbContext.Names.OrderBy(x => x.Id).ToList();
-                    var countries = dbContext.Countries.ToList();
-
-                    int count = 0;
-
-                    foreach (var babyName in babyNames)
-                    {
-                        if(babyName.Id <= currentNameId)
-                        {
-                            continue;
-                        }
-
-                        Trace.WriteLine($"Name {babyName.Name} (Id= {babyName.Id})...");
-                        if (babyName.line.StartsWith("#"))
-                        {
-                            continue;
-                        }
-
-                        var countryCodes = wrapper.GetCountryCodesWithFrequency(babyName.line);
-                        var countriesIncludingName = countries.Where(x => countryCodes.Keys.Contains(x.CountryCode));
-
-                        foreach (var countryIncludingName in countriesIncludingName)
-                        {
-                            babyName.Countries.Add(countryIncludingName);
-                        }
-
-                        if (count++ > 500)
-                        {
-                            currentNameId = babyName.Id;
-                            dbContext.SaveChanges();
-                            reloadContext = true;
-                            break;
-                        }
-
-                        reloadContext = false;
-                    }
-
-                    if(!reloadContext)
-                    {
-                        dbContext.SaveChanges();
-                        currentNameId = -1;
-                    }
-                }
-            }
         }
     }
 }

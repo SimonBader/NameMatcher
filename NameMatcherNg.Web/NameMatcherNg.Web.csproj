@@ -149,6 +149,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\BabyName.cs" />
+    <Compile Include="Models\BabyName2Country.cs" />
     <Compile Include="Models\BabyNameViewModel.cs" />
     <Compile Include="Models\CountriesBindingModel.cs" />
     <Compile Include="Models\Country.cs" />

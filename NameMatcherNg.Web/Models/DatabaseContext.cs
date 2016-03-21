@@ -9,10 +9,12 @@ namespace NameMatcherNg.Web.Models
 
         }
 
+        public DbSet<BabyName> Names { get; set; }
+
+        public DbSet<BabyName2Country> BabyName2CountryList { get; set; }
+
         public DbSet<Country> Countries { get; set; }
 
         public DbSet<State> States { get; set; }
-
-        public DbSet<BabyName> Names { get; set; }
     }
 }

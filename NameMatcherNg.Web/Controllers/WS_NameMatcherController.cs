@@ -47,7 +47,7 @@ namespace NameMatcherNg.Web.Controllers
             else
             {
                 BabyName name = await db.Names.FirstAsync(x => x.Name == bindingModel.BabyNameFilter); // TODO: currently there are some name duplicates in DB.
-                countries = name.Countries.ToList();
+                countries = name.BabyName2CountryList.Select(x => x.Country).ToList();
             }
 
             return countries.Select(x => new CountryViewModel(x)).ToList();
@@ -61,7 +61,7 @@ namespace NameMatcherNg.Web.Controllers
             }
 
             var before = DateTime.Now;
-            var names = await db.Names.Where(x => x.Countries.Select(y => y.CountryCode).Intersect(countryCodes).Count() == countryCodes.Count()).ToListAsync();
+            var names = await db.Names.Where(x => x.BabyName2CountryList.Select(y => y.Country.CountryCode).Intersect(countryCodes).Count() == countryCodes.Count()).ToListAsync();
             var namesViewModel = names.Select(x => new BabyNameViewModel(x)).ToList();
             var after = DateTime.Now;
             Trace.WriteLine($"Duration GetNamesByCountryCode: {(after - before).TotalMilliseconds} ms");

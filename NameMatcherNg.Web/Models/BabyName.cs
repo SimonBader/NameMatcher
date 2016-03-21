@@ -10,8 +10,9 @@ namespace NameMatcherNg.Web.Models
     {
         public BabyName()
         {
-            Countries = new HashSet<Country>();
+            BabyName2CountryList = new HashSet<BabyName2Country>();
         }
+
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
@@ -19,6 +20,6 @@ namespace NameMatcherNg.Web.Models
         public bool IsFemale { get; set; }
         public int Frequency { get; set; }
         public int? CountriesWithSimilarNameCount { get; set; }
-        public virtual ICollection<Country> Countries { get; set; }
+        public virtual ICollection<BabyName2Country> BabyName2CountryList { get; set; }
     }
 }
