@@ -18,7 +18,6 @@ namespace NameMatcherNg.Web.Models
         public string Name { get; set; }
         public string line { get; set; }
         public bool IsFemale { get; set; }
-        public int Frequency { get; set; }
         public int? CountriesWithSimilarNameCount { get; set; }
         public virtual ICollection<BabyName2Country> BabyName2CountryList { get; set; }
     }

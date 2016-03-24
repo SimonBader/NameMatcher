@@ -16,6 +16,39 @@ namespace NameMatcherNg.Web.Tests
     [TestClass]
     public class DatabaseImport
     {
+        [TestMethod, Ignore]
+        public void ImportDummyNamesIntoDB()
+        {
+            using (var dbContext = new DatabaseContext())
+            {
+                var country = new Country() { Name = "Germany", CountryCode = "DE" };
+                var name = new BabyName { Name = "Simon", CountriesWithSimilarNameCount = 1 };
+                dbContext.BulkInsert(new List<Country> { country });
+                dbContext.BulkInsert(new List<BabyName> { name });
+                dbContext.SaveChanges();
+            }
+
+            using (var dbContext = new DatabaseContext())
+            {
+                var countries = dbContext.Countries.ToList();
+                var names = dbContext.Names.ToList();
+                var name2CountryList = new List<BabyName2Country>();
+
+                foreach (var country in countries)
+                {
+                    foreach (var name in names)
+                    {
+                        var name2country = new BabyName2Country { Country = country, BabyName = name };
+                        name.BabyName2CountryList.Add(name2country);
+                        country.BabyName2CountryList.Add(name2country);
+                        //name2CountryList.Add(name2country);
+                    }
+                }
+
+                //dbContext.BulkInsert(name2CountryList);
+                dbContext.SaveChanges();
+            }
+        }
 
         [TestMethod]
         public void ImportIntoDB()
@@ -53,45 +86,56 @@ namespace NameMatcherNg.Web.Tests
         {
             var wrapper = new CtGenderWrapper();
             int currentNameId = 0;
+            bool reloadContext = false;
 
-            using (var dbContext = new DatabaseContext())
+            while (currentNameId != -1)
             {
-                var babyNames = dbContext.Names.OrderBy(x => x.Id).ToList();
-                var countries = dbContext.Countries.ToList();
-                var babyName2CountryList = new List<BabyName2Country>();
-
-                foreach (var babyName in babyNames)
+                using (var dbContext = new DatabaseContext())
                 {
-                    if (babyName.Id <= currentNameId)
+                    var babyNames = dbContext.Names.OrderBy(x => x.Id).ToList();
+                    var countries = dbContext.Countries.ToList();
+                    int count = 0;
+
+                    foreach (var babyName in babyNames)
                     {
-                        continue;
+                        if (babyName.Id <= currentNameId)
+                        {
+                            continue;
+                        }
+
+                        Trace.WriteLine($"Name {babyName.Name} (Id= {babyName.Id})...");
+                        if (babyName.line.StartsWith("#"))
+                        {
+                            continue;
+                        }
+
+                        var countryCodesWithFrequency = wrapper.GetCountryCodesWithFrequency(babyName.line);
+
+                        foreach (var countryCodeWithFrequency in countryCodesWithFrequency)
+                        {
+                            var countryIncludingName = countries.Single(x => countryCodeWithFrequency.Key == x.CountryCode);
+                            var babyName2Country = new BabyName2Country() { BabyName = babyName, Country = countryIncludingName, Frequency = countryCodeWithFrequency.Value };
+                            babyName.BabyName2CountryList.Add(babyName2Country);
+                            countryIncludingName.BabyName2CountryList.Add(babyName2Country);
+                        }
+
+                        if (count++ > 200)
+                        {
+                            currentNameId = babyName.Id;
+                            dbContext.SaveChanges();
+                            reloadContext = true;
+                            break;
+                        }
+
+                        reloadContext = false;
                     }
 
-                    Trace.WriteLine($"Name {babyName.Name} (Id= {babyName.Id})...");
-                    if (babyName.line.StartsWith("#"))
+                    if (!reloadContext)
                     {
-                        continue;
-                    }
-
-                    var countryCodesWithFrequency = wrapper.GetCountryCodesWithFrequency(babyName.line);
-
-                    foreach (var countryCodeWithFrequency in countryCodesWithFrequency)
-                    {
-                        var countryIncludingName = countries.Single(x => countryCodeWithFrequency.Key == x.CountryCode);
-                        var babyName2Country = new BabyName2Country() { BabyName = babyName, Country = countryIncludingName, Frequency = countryCodeWithFrequency.Value };
-                        babyName2CountryList.Add(babyName2Country);
+                        dbContext.SaveChanges();
+                        currentNameId = -1;
                     }
                 }
-
-                dbContext.BulkInsert(babyName2CountryList);
-                
-                foreach(var babyName2Country in babyName2CountryList)
-                {
-                    babyName2Country.BabyName.BabyName2CountryList.Add(babyName2Country);
-                    babyName2Country.Country.BabyName2CountryList.Add(babyName2Country);
-                }
-
-                dbContext.SaveChanges();
             }
         }
 
