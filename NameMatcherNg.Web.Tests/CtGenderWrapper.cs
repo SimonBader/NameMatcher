@@ -110,14 +110,15 @@ namespace NameMatcherNg.Web.Tests
                     string genderField = line.Substring(genderIndex, nameIndex - genderIndex).Trim();
                     string nameField = line.Substring(nameIndex, sortIndex - nameIndex).Trim();
 
-                    foreach (var gender in GetGenders(genderField))
+                    foreach (var isFemale in GetGenders(genderField))
                     {
                         foreach (var name in GetNames(nameField))
                         {
                             names.Add(new BabyName
                             {
                                 Name = name,
-                                line = line
+                                line = line,
+                                IsFemale = isFemale
                             });
                         }
                     }        
@@ -153,8 +154,8 @@ namespace NameMatcherNg.Web.Tests
         private IList<bool> GetGenders(string genderField)
         {
             var genders = new List<bool>();
-            var females = new List<string> { "M", "1M", "?M", "?" };
-            var males = new List<string> { "F", "1F", "?F", "?" };
+            var males = new List<string> { "M", "1M", "?M", "?" };
+            var females = new List<string> { "F", "1F", "?F", "?" };
 
             if (females.Contains(genderField))
             {
@@ -162,7 +163,7 @@ namespace NameMatcherNg.Web.Tests
             }
             if (males.Contains(genderField))
             {
-                genders.Add(true);
+                genders.Add(false);
             }
 
             return genders;

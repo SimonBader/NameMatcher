@@ -40,16 +40,21 @@ namespace NameMatcherNg.Web.Controllers
         public async Task<List<CountryViewModel>> Countries(CountriesBindingModel bindingModel)
         {
             List<Country> countries;
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             if (bindingModel.BabyNameFilter == null)
             {
                 countries = await db.Countries.ToListAsync();
             }
             else
             {
-                BabyName name = await db.Names.FirstAsync(x => x.Name == bindingModel.BabyNameFilter); // TODO: currently there are some name duplicates in DB.
-                countries = name.BabyName2CountryList.Select(x => x.Country).ToList();
+                var babyName2Country = await db.BabyName2CountryList.Include("Country").Where(x => x.BabyName.Name == bindingModel.BabyNameFilter).ToListAsync();
+                countries = babyName2Country.Select(x => x.Country).ToList();
             }
 
+            stopwatch.Stop();
+            Trace.WriteLine($"Duration Countries {stopwatch.ElapsedMilliseconds} ms");
             return countries.Select(x => new CountryViewModel(x)).ToList();
         }
 
@@ -60,11 +65,12 @@ namespace NameMatcherNg.Web.Controllers
                 return new List<BabyNameViewModel>();
             }
 
-            var before = DateTime.Now;
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             var names = await db.Names.Where(x => x.BabyName2CountryList.Select(y => y.Country.CountryCode).Intersect(countryCodes).Count() == countryCodes.Count()).ToListAsync();
             var namesViewModel = names.Select(x => new BabyNameViewModel(x)).ToList();
-            var after = DateTime.Now;
-            Trace.WriteLine($"Duration GetNamesByCountryCode: {(after - before).TotalMilliseconds} ms");
+            stopwatch.Stop();
+            Trace.WriteLine($"Duration GetNamesByCountryCode: {stopwatch.ElapsedMilliseconds} ms");
             return namesViewModel;
         }
 
@@ -75,11 +81,12 @@ namespace NameMatcherNg.Web.Controllers
                 return new List<BabyNameViewModel>();
             }
 
-            var before = DateTime.Now;
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             var filteredNames = await db.Names.Where(x => x.Name.Contains(nameFilter)).Take(30).ToListAsync();
             var namesViewModel = filteredNames.Select(x => new BabyNameViewModel(x)).ToList();
-            var after = DateTime.Now;
-            Trace.WriteLine($"Duration GetNamesByFilter: {(after - before).TotalMilliseconds} ms");
+            stopwatch.Stop();
+            Trace.WriteLine($"Duration GetNamesByFilter: {stopwatch.ElapsedMilliseconds} ms");
             return namesViewModel;
         }
     }

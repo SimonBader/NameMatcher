@@ -9,7 +9,7 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
 */
-:r .\Scripts\Countries.data.sql
-:r .\Scripts\States.data.sql
-:r .\Scripts\BabyNames.data.sql
+-- :r .\Scripts\Countries.data.sql
+-- :r .\Scripts\States.data.sql
+-- :r .\Scripts\BabyNames.data.sql
 -- :r .\Scripts\BabyNameCountries.data.sql -- TODO: run in SQL Management Studio instead

@@ -16,14 +16,17 @@ namespace NameMatcherNg.Web.Tests
     [TestClass]
     public class DatabaseImport
     {
-        [TestMethod, Ignore]
+        [TestMethod]
         public void ImportDummyNamesIntoDB()
         {
+            System.Data.Entity.Database.SetInitializer(new DBInitializer());
+
             using (var dbContext = new DatabaseContext())
             {
-                var country = new Country() { Name = "Germany", CountryCode = "DE" };
+                var country1 = new Country() { Name = "Germany", CountryCode = "DE" };
+                var country2 = new Country() { Name = "Switzerland", CountryCode = "CH" };
                 var name = new BabyName { Name = "Simon", CountriesWithSimilarNameCount = 1 };
-                dbContext.BulkInsert(new List<Country> { country });
+                dbContext.BulkInsert(new List<Country> { country1, country2 });
                 dbContext.BulkInsert(new List<BabyName> { name });
                 dbContext.SaveChanges();
             }
@@ -41,11 +44,34 @@ namespace NameMatcherNg.Web.Tests
                         var name2country = new BabyName2Country { Country = country, BabyName = name };
                         name.BabyName2CountryList.Add(name2country);
                         country.BabyName2CountryList.Add(name2country);
-                        //name2CountryList.Add(name2country);
+                    }
+                }
+                
+                dbContext.SaveChanges();
+            }
+        }
+
+
+        [TestMethod]
+        public void SetCountriesWithSimilarNameCount()
+        {
+            using (var dbContext = new DatabaseContext())
+            {
+                int count = 0;
+                var babyName2CountryList = dbContext.BabyName2CountryList.Include("BabyName").Include("Country").GroupBy(x => x.BabyName).ToList();
+
+                foreach (var babyName2Country in babyName2CountryList)
+                {
+                    Trace.WriteLine($"Name {babyName2Country.Key.Name} (Id= {babyName2Country.Key.Id})...");
+                    babyName2Country.Key.CountriesWithSimilarNameCount = babyName2Country.Count();
+
+                    if (count++ > 100)
+                    {
+                        count = 0;
+                        dbContext.SaveChanges();
                     }
                 }
 
-                //dbContext.BulkInsert(name2CountryList);
                 dbContext.SaveChanges();
             }
         }
@@ -53,11 +79,13 @@ namespace NameMatcherNg.Web.Tests
         [TestMethod]
         public void ImportIntoDB()
         {
+            System.Data.Entity.Database.SetInitializer(new DBInitializer());
+
             ImportStatesIntoDB();
             ImportCountryCodesAndNamesIntoDB();
             ImportBabyName2CountryCodeListIntoDB();
         }
-        
+
 
         private void ImportCountryCodesAndNamesIntoDB()
         {
@@ -71,8 +99,6 @@ namespace NameMatcherNg.Web.Tests
 
             var wrapper = new CtGenderWrapper();
             var names = wrapper.GetNames();
-
-            System.Data.Entity.Database.SetInitializer(new DBInitializer());
 
             using (var dbContext = new DatabaseContext())
             {
@@ -110,10 +136,13 @@ namespace NameMatcherNg.Web.Tests
                         }
 
                         var countryCodesWithFrequency = wrapper.GetCountryCodesWithFrequency(babyName.line);
+                        var countriesWithSimilarNameCount = countryCodesWithFrequency.Count();
 
                         foreach (var countryCodeWithFrequency in countryCodesWithFrequency)
                         {
+                            babyName.CountriesWithSimilarNameCount = countriesWithSimilarNameCount;
                             var countryIncludingName = countries.Single(x => countryCodeWithFrequency.Key == x.CountryCode);
+
                             var babyName2Country = new BabyName2Country() { BabyName = babyName, Country = countryIncludingName, Frequency = countryCodeWithFrequency.Value };
                             babyName.BabyName2CountryList.Add(babyName2Country);
                             countryIncludingName.BabyName2CountryList.Add(babyName2Country);
@@ -122,7 +151,11 @@ namespace NameMatcherNg.Web.Tests
                         if (count++ > 200)
                         {
                             currentNameId = babyName.Id;
+                            var stopwatch = new Stopwatch();
+                            stopwatch.Start();
                             dbContext.SaveChanges();
+                            stopwatch.Stop();
+                            Trace.WriteLine($"SaveChanges {stopwatch.ElapsedMilliseconds} ms");
                             reloadContext = true;
                             break;
                         }
@@ -3303,7 +3336,7 @@ namespace NameMatcherNg.Web.Tests
             Trace.WriteLine($"DB sync: start states");
 
             Trace.WriteLine("Create DB if not exists");
-            System.Data.Entity.Database.SetInitializer(new DBInitializer());
+            //System.Data.Entity.Database.SetInitializer(new DBInitializer());
 
             using (var nameContext = new DatabaseContext())
             {

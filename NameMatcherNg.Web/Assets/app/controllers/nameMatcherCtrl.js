@@ -71,7 +71,7 @@
         function filterData(babyNames) {
             return babyNames.filter(function (babyName) {
                 return $scope.filter == null ||
-                    babyName.Name.toLowerCase().indexOf($scope.filter) > -1;
+                    babyName.Name.toLowerCase().indexOf($scope.filter.toLowerCase()) > -1;
             });
         }
     }]);
