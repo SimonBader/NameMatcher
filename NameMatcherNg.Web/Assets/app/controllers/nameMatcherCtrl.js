@@ -1,5 +1,7 @@
 ﻿angular.module('nameMatcher', [])
     .controller('nameMatcherCtrl', ['$scope', '$http', function ($scope, $http) {
+        $scope.filter = null;
+        $scope.isFemale = true;
 
         $scope.getCountries = function () {
             $http.get('/api/WS_NameMatcher/Countries')
@@ -10,17 +12,22 @@
 
         $scope.onSelectionChanged = function (countryCodes) {
             $scope.similarCountryCodes = [];
-            $scope.countryCode = countryCodes;
-            getNamesByCountries($scope.countryCode);
+            $scope.countryCodes = countryCodes;
+            getNamesByCountries($scope.countryCodes);
         }
 
         $scope.filterChanged = function () {
-            if ($scope.countryCode != null) {
+            if ($scope.countryCodes != null && $scope.countryCodes.length > 0) {
                 $scope.filteredBabyNames = filterData($scope.babyNames);
             }
             else {
                 getNamesByNameFilter($scope.filter);
             }
+        };
+
+        $scope.toggleGender = function () {
+            $scope.isFemale = !$scope.isFemale;
+            $scope.filterChanged();
         };
 
         $scope.getSimilarCountries = function (babyName) {
@@ -70,8 +77,8 @@
 
         function filterData(babyNames) {
             return babyNames.filter(function (babyName) {
-                return $scope.filter == null ||
-                    babyName.Name.toLowerCase().indexOf($scope.filter.toLowerCase()) > -1;
+                return babyName.IsFemale === $scope.isFemale &&
+                       ($scope.filter == null || babyName.Name.toLowerCase().indexOf($scope.filter.toLowerCase()) > -1);
             });
         }
     }]);

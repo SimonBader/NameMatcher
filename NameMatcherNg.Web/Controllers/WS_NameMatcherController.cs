@@ -33,7 +33,7 @@ namespace NameMatcherNg.Web.Controllers
                 return await GetNamesByFilter(bindingModel.NameFilter);
             }
 
-            throw new NotSupportedException("Failed to get Names: whether a list of country codes nor a name filter have been passed.");
+            return new List<BabyNameViewModel>();
         }
 
         [HttpPost]

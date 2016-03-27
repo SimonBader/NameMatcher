@@ -1,12 +1,18 @@
 ﻿
 <div>
     <div class="col-md-2">
-        <input type="search" 
-               class="form-control" 
-               placeholder="search for name..." 
-               ng-model="filter" 
-               ng-change="filterChanged()">
-        <div class="dropdown-toggle">ABC</div>
+        <div class="input-group">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button" ng-click="toggleGender()">
+                    <span ng-class="isFemale ? 'fi-female-symbol' : 'fi-male-symbol'"></span>
+                </button>
+            </span>
+            <input type="search"
+                   class="form-control container"
+                   placeholder="search for name..."
+                   ng-model="filter"
+                   ng-change="filterChanged()" />
+        </div>
         <div class="list-group">
             <a class="list-group-item" 
                 ng-click="getSimilarCountries(babyName)" 
