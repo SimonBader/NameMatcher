@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Countries] (
     [Id]          INT            IDENTITY (1, 1) NOT NULL,
-    [Name]        NVARCHAR (100) NULL,
-    [CountryCode] NVARCHAR (100) NULL, 
+    [Name]        NVARCHAR (MAX) NULL,
+    [CountryCode] NVARCHAR (MAX) NULL,
     CONSTRAINT [PK_Countries] PRIMARY KEY ([Id])
 );
 GO;

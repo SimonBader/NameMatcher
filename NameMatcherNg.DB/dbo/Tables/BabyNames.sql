@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [dbo].[BabyNames] (
-    [Id]        INT            IDENTITY (1, 1) NOT NULL,
-    [Name]      NVARCHAR (100) NULL,
-    [line]      NVARCHAR (MAX) NULL,
-    [IsFemale]  BIT            NOT NULL,
-    [CountriesWithSimilarNameCount] INT NULL, 
+    [Id]                            INT            IDENTITY (1, 1) NOT NULL,
+    [Name]                          NVARCHAR (MAX) NULL,
+    [line]                          NVARCHAR (MAX) NULL,
+    [IsFemale]                      BIT            NOT NULL,
+    [CountriesWithSimilarNameCount] INT            NULL, 
     CONSTRAINT [PK_BabyNames] PRIMARY KEY ([Id])
 );
 GO;
