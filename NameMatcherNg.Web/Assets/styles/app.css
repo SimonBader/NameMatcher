@@ -1,0 +1,23 @@
+﻿.app-list-scrollable {
+    height: 100%;
+    margin-bottom: 0;
+    overflow: auto;
+}
+
+@media (min-width: 768px){
+    .container-sm-height {
+        display: table;
+        width : 100%; 
+        height : 100%;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+    .row-sm-height {
+        display: table-row;
+    }
+    .col-sm-height {
+        vertical-align: top;
+        display: table-cell;
+        float: none;
+    }
+}

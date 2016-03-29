@@ -51,13 +51,13 @@ app.config(['$provide', '$routeProvider', '$httpProvider', function ($provide, $
     //================================================
     // Routes
     //================================================
-    $routeProvider.when('/namematcher', {
-        templateUrl: 'App/NameMatcher',
+    $routeProvider.when('/', {
+        templateUrl: 'Assets/app/templates/nameMatcher.html',
         controller: 'nameMatcherCtrl'
     });
     
     $routeProvider.otherwise({
-        redirectTo: '/home'
+        redirectTo: '/'
     });    
 }]);
 
