@@ -5,17 +5,17 @@
 }
 
 @media (min-width: 768px){
-    .container-sm-height {
+    .container-md-height {
         display: table;
         width : 100%; 
         height : 100%;
         padding-left: 0px;
         padding-right: 0px;
     }
-    .row-sm-height {
+    .row-md-height {
         display: table-row;
     }
-    .col-sm-height {
+    .col-md-height {
         vertical-align: top;
         display: table-cell;
         float: none;
